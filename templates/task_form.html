@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo</title>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    <form method="POST">
+        <input type="hidden" name="id" id="id" value="{{ task.id }}">
+        <textarea name="name" id="name" cols="30" rows="10" required>{{ task.name }}</textarea>
+        <br>
+        Done: <input type="checkbox" name="status" id="status" {% if task.status %}checked{% end %}>
+        <br>
+        <button type="submit">Create</button>
+    </form>
+</body>
+</html>

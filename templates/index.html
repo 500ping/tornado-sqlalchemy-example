@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo</title>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    <a href="/add_task">Create task</a>
+    <ul>
+        {% for task in tasks%}
+            <li>
+                <span {% if task.status == True %}style="text-decoration: line-through;"{% end %}>ID: {{ task.id }} - Name: {{ task.name }}</span>
+                -
+                <a href="/edit_task/{{ task.id }}" style="color: blue; text-decoration: none;"> Edit</a>
+                /
+                <a href="/delete_task/{{ task.id }}" style="color: red; text-decoration: none;"> Delete</a>
+            </li>
+        {% end %}
+    </ul>
+</body>
+</html>

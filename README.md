@@ -9,15 +9,15 @@ db name: tornado_example
 (*) change in db.py
 ```
 
+## Installation
+```
+pip install -r requirements.txt
+```
+
 ## Map tables
 ```
 alembic revision --autogenerate -m "Add table"
 alembic upgrade head
-```
-
-## Installation
-```
-pip install -r requirements.txt
 ```
 
 ## Run project

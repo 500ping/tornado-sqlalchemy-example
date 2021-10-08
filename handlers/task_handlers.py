@@ -1,15 +1,15 @@
 import tornado.web
-from tornado_sqlalchemy import SessionMixin
 
 from . import BaseHandler
 from models.task import Task
 
-class IndexHandler(BaseHandler, SessionMixin):
+
+class IndexHandler(BaseHandler):
 
     @tornado.web.authenticated
     def get(self):
         with self.make_session() as session:
-            tasks = session.query(Task).order_by(Task.id.desc()).all()
+            tasks = session.query(Task).filter(Task.user_id == self.current_user.id).order_by(Task.id.desc()).all()
             session.expunge_all()
 
         context = {
@@ -17,10 +17,10 @@ class IndexHandler(BaseHandler, SessionMixin):
             'tasks': tasks,
         }
 
-        self.render('../templates/index.html', **context)
+        self.render('index.html', **context)
 
 
-class AddTaskHandler(BaseHandler, SessionMixin):
+class AddTaskHandler(BaseHandler):
 
     @tornado.web.authenticated
     def get(self):
@@ -29,20 +29,20 @@ class AddTaskHandler(BaseHandler, SessionMixin):
             'task': Task(name=''),
         }
 
-        self.render('../templates/task_form.html', **context)
+        self.render('task_form.html', **context)
 
     @tornado.web.authenticated
     def post(self):
+        name = self.get_argument('name')
+        status = True if self.get_argument('status', None) else False
         with self.make_session() as session:
-            name = self.get_argument('name')
-            status = True if self.get_argument('status', None) else False
-            task = Task(name=name, status=status)
+            task = Task(name=name, status=status, user_id=self.current_user.id)
             session.add(task)
             session.commit()
         self.redirect('/')
 
 
-class EditTaskHandler(BaseHandler, SessionMixin):
+class EditTaskHandler(BaseHandler):
 
     @tornado.web.authenticated
     def get(self, task_id):
@@ -55,13 +55,13 @@ class EditTaskHandler(BaseHandler, SessionMixin):
             'task': task,
         }
 
-        self.render('../templates/task_form.html', **context)
+        self.render('task_form.html', **context)
 
     @tornado.web.authenticated
     def post(self, task_id):
+        name = self.get_argument('name')
+        status = True if self.get_argument('status', None) else False
         with self.make_session() as session:
-            name = self.get_argument('name')
-            status = True if self.get_argument('status', None) else False
             task = session.query(Task).get(int(task_id))
             task.name = name
             task.status = status
@@ -69,7 +69,7 @@ class EditTaskHandler(BaseHandler, SessionMixin):
         self.redirect('/')
 
 
-class DeleteTaskHandler(BaseHandler, SessionMixin):
+class DeleteTaskHandler(BaseHandler):
 
     @tornado.web.authenticated
     def get(self, task_id):
